@@ -16,11 +16,7 @@ const SetupPage = () => {
 
   return (
     <div className="p-4">
-<<<<<<< HEAD
         front page
-=======
-        main page
->>>>>>> 82024e9c61cb7478110c660e33710a000a1f64dc
     </div>
   );
 };
