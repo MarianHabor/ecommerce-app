@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertModal } from "@/components/modals/alert-modal";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
@@ -31,7 +32,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
     const params = useParams();
     const router = useRouter();
 
-    const [open, SetOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const onSubmmit = async (data: SettingsFormValues) => {
@@ -51,8 +52,25 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
         resolver: zodResolver(formSchema),
         defaultValues: initialData
     });
+
+    const onDelete = async () => {
+        try {
+            setLoading(true);
+            await axios.delete(`/api/stores/${params.storeId}`);
+            router.refresh();
+            router.push("/");
+            toast.success("Store deleted.");
+        } catch (error) {
+            toast.error("Remove categories and all products first.");
+        } finally {
+            setLoading(false);
+            setOpen(false);
+        }
+    }
+
     return (
         <>
+            <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={onDelete} loading={loading} />
             <div className="flex items-center justify-between">
                 <Heading
                     title="Settings"
@@ -62,7 +80,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                     disabled={loading}
                     variant="destructive"
                     size="sm"
-                    onClick={() => SetOpen(true)}
+                    onClick={() => setOpen(true)}
                 >
                     <Trash className="h-4 w-4" />
                 </Button>
